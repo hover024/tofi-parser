@@ -9,11 +9,13 @@ getDom(`${DOMAIN}/kredity/potrebitelskie`)
     .then($ => {
         //links = $('table.items .checkbox-text a').toArray().map(link => link.attribs.href);
         result = {};
-        rows = $('table.items tr');
+        rows = $('table.items tr.odd');
 
         rows.each((idx, row) => {
-            const link = $(row).children('a').attr('href');
+            const link = $(row).find('span.checkbox-text a');
 
-            console.log(link);
+            console.log($(link).attr('href'));
+            console.log($(link).text());
+            // process.exit(1);
         });
     });
