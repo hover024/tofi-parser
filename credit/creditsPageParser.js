@@ -1,21 +1,86 @@
 const
     { getDom } = require('../common/dom'),
+    await = require('await'),
     { DOMAIN, CREDITS_PATHES, CREDIT_DOMAIN } = require('../config');
 
-function getCredits() {
+function getCreditsForPath(path) {
+    let result = [];
+
+    await(getDom(`${DOMAIN}${CREDIT_DOMAIN}${path}`)
+        .then($ => {
+            let rows = $('table.items tr.odd');
+
+            rows.each((idx, row) => {
+                result = [
+                    ...result,
+                    getRowData($, row)
+                ]
+            });
+
+            rows = $('table.items tr.even');
+
+            rows.each((idx, row) => {
+                result = [
+                    ...result,
+                    getRowData($, row)
+                ]
+            });
+
+            console.log(result);
+        }));
+
+    console.log(result);
 }
+
+function getRowData($, row) {
+    const
+        linkTag = $(row).find('span.checkbox-text a'),
+        link = $(linkTag).attr('href'),
+        name = $(linkTag).text(),
+        bank = $(row).find('span.n-bank').text(),
+        rate = $(row).children('td.number').text(),
+        payment = $(row).children('td.pay').text(),
+        overpay = $(row).children('td.overpay').text();
+
+    return {
+        link,
+        name,
+        rate,
+        payment,
+        overpay,
+        bank
+    }
+}
+
+getCreditsForPath('/potrebitelskie');
 
 getDom(`${DOMAIN}/kredity/potrebitelskie`)
     .then($ => {
-        //links = $('table.items .checkbox-text a').toArray().map(link => link.attribs.href);
-        result = {};
+        let result = [];
         rows = $('table.items tr.odd');
 
         rows.each((idx, row) => {
-            const link = $(row).find('span.checkbox-text a');
+            const
+                linkTag = $(row).find('span.checkbox-text a'),
+                link = $(linkTag).attr('href'),
+                name = $(linkTag).text(),
+                bank = $(row).find('span.n-bank').text(),
+                rate = $(row).children('td.number').text(),
+                payment = $(row).children('td.pay').text(),
+                overpay = $(row).children('td.overpay').text();
 
-            console.log($(link).attr('href'));
-            console.log($(link).text());
-            // process.exit(1);
+            result = [
+                ...result,
+                {
+                    link,
+                    name,
+                    rate,
+                    payment,
+                    overpay,
+                    bank
+                }
+            ]
         });
+
+        //console.log(result);
     });
