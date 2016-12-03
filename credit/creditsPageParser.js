@@ -1,12 +1,15 @@
 const
     { getDom } = require('../common/dom'),
-    await = require('await'),
-    { DOMAIN, CREDITS_PATHES, CREDIT_DOMAIN } = require('../config');
+    async = require('asyncawait/async'),
+    await = require('asyncawait/await'),
+    { keyBy, keys } = require('lodash'),
+    hash = require('password-hash'),
+    { DOMAIN, CREDITS_PATHES, CREDIT_DOMAIN, CREDIT_PAGING } = require('../config');
 
-function getCreditsForPath(path) {
+const getCreditsForPath = async(function (path) {
     let result = [];
 
-    await(getDom(`${DOMAIN}${CREDIT_DOMAIN}${path}`)
+    [1, 2, 3].forEach(page => await (getDom(`${DOMAIN}${CREDIT_DOMAIN}${path}?${CREDIT_PAGING}=${page}`)
         .then($ => {
             let rows = $('table.items tr.odd');
 
@@ -25,22 +28,33 @@ function getCreditsForPath(path) {
                     getRowData($, row)
                 ]
             });
+        })));
 
-            console.log(result);
-        }));
+    return result;
+});
 
-    console.log(result);
-}
+const getAllCredits = async( function() {
+    let result = [];
+
+    CREDITS_PATHES.forEach(path => {
+        result = [
+            ...result,
+            ...await(getCreditsForPath(path))
+        ];
+    });
+
+    return keyBy(result, ({bank, name}) => bank+name);
+});
 
 function getRowData($, row) {
     const
         linkTag = $(row).find('span.checkbox-text a'),
         link = $(linkTag).attr('href'),
-        name = $(linkTag).text(),
-        bank = $(row).find('span.n-bank').text(),
-        rate = $(row).children('td.number').text(),
-        payment = $(row).children('td.pay').text(),
-        overpay = $(row).children('td.overpay').text();
+        name = $(linkTag).text().trim(),
+        bank = $(row).find('span.n-bank').text().trim(),
+        rate = $(row).children('td.number').text().trim(),
+        payment = $(row).children('td.pay').text().trim(),
+        overpay = $(row).children('td.overpay').text().trim();
 
     return {
         link,
@@ -52,35 +66,9 @@ function getRowData($, row) {
     }
 }
 
-getCreditsForPath('/potrebitelskie');
+module.exports
 
-getDom(`${DOMAIN}/kredity/potrebitelskie`)
-    .then($ => {
-        let result = [];
-        rows = $('table.items tr.odd');
-
-        rows.each((idx, row) => {
-            const
-                linkTag = $(row).find('span.checkbox-text a'),
-                link = $(linkTag).attr('href'),
-                name = $(linkTag).text(),
-                bank = $(row).find('span.n-bank').text(),
-                rate = $(row).children('td.number').text(),
-                payment = $(row).children('td.pay').text(),
-                overpay = $(row).children('td.overpay').text();
-
-            result = [
-                ...result,
-                {
-                    link,
-                    name,
-                    rate,
-                    payment,
-                    overpay,
-                    bank
-                }
-            ]
-        });
-
-        //console.log(result);
+getAllCredits()
+    .then(result => {
+        console.log(keys(result).length);
     });

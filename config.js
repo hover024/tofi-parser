@@ -9,5 +9,6 @@ module.exports = {
         '/na-obuchenie'
     ],
     CREDIT_DOMAIN: '/kredity',
-    DEBIT_DOMAIN: '/vklady'
+    DEBIT_DOMAIN: '/vklady',
+    CREDIT_PAGING: 'Kredity_page'
 };
