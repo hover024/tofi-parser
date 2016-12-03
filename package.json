@@ -12,6 +12,7 @@
     "asyncawait": "^1.0.6",
     "cheerio": "^0.22.0",
     "lodash": "^4.17.2",
+    "object-assign": "^4.1.0",
     "password-hash": "^1.2.2",
     "request": "^2.79.0"
   }

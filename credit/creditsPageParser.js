@@ -2,7 +2,7 @@ const
     { getDom } = require('../common/dom'),
     async = require('asyncawait/async'),
     await = require('asyncawait/await'),
-    { keyBy, keys } = require('lodash'),
+    { keyBy } = require('lodash'),
     hash = require('password-hash'),
     { DOMAIN, CREDITS_PATHES, CREDIT_DOMAIN, CREDIT_PAGING } = require('../config');
 
@@ -66,9 +66,4 @@ function getRowData($, row) {
     }
 }
 
-module.exports
-
-getAllCredits()
-    .then(result => {
-        console.log(keys(result).length);
-    });
+module.exports.getAllCredits = getAllCredits;

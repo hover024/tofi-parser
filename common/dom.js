@@ -5,9 +5,16 @@ const
 function getDom(url) {
     return new Promise((resolve, reject) => {
         request(url, (error, response, html) => {
-            result = cheerio.load(html);
-
-            resolve(result);
+        	try {
+            	result = cheerio.load(html);
+            	resolve(result);
+        	} catch (e){
+        		console.log('-------------------');
+        		console.log(url);
+        		console.log('-------------------');
+        		result = cheerio.load('<div/>');
+            	resolve(result);
+        	}
         });
     });
 }

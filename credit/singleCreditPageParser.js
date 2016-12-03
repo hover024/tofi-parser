@@ -1,16 +1,25 @@
-function parseDetails(link) {
-    getDom(`${DOMAIN}${link}`)
-        .then(dom => {
-            const
-                res = {},
-                rows = dom('.conditions-table tr');
+const
+    { getDom } = require('../common/dom'),
+    async = require('asyncawait/async'),
+    await = require('asyncawait/await'),
+    { DOMAIN } = require('../config'),
+    objectAssign = require('object-assign');
+
+const addDetailsToCredit = async(function(credit) {
+    const result = objectAssign(credit);
+
+    await (getDom(`${DOMAIN}${credit.link}`)
+        .then($ => {
+            const rows = $('.conditions-table tr');
 
             rows.each((idx, row) => {
-                const columns = dom(row).children('td');
+                const columns = $(row).children('td');
 
-                res[dom(columns[0]).text()] = (dom(columns[1]).text()).trim().replace(/(\r\n|\n|\r|\t)/g, '');
+                result[$(columns[0]).text()] = ($(columns[1]).text()).trim().replace(/(\r\n|\n|\r|\t)/g, '') + '   ' + credit.link;
             });
+        }));
 
-            console.log(res);
-        });
-}
+    return result;
+});
+
+module.exports.addDetailsToCredit = addDetailsToCredit;
