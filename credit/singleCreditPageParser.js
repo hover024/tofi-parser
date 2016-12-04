@@ -15,7 +15,7 @@ const addDetailsToCredit = async(function(credit) {
             rows.each((idx, row) => {
                 const columns = $(row).children('td');
 
-                result[$(columns[0]).text()] = ($(columns[1]).text()).trim().replace(/(\r\n|\n|\r|\t)/g, '') + '   ' + credit.link;
+                result[$(columns[0]).text()] = ($(columns[1]).text()).trim().replace(/(\r\n|\n|\r|\t)/g, '');
             });
         }));
 
