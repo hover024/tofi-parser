@@ -65,8 +65,6 @@ const addDetailsToDebit = async(function(debit) {
                 });
             });
 
-            console.log(arr);
-
             result.percentage = resultArr;
 
             result.page = parsePage(page);

@@ -13,7 +13,7 @@ const
     objectAssign = require('object-assign'),
     numeral = require('numeral');
 
-let 
+let
 	fields = {};
 
 const getSetOfFields = async(function() {
@@ -25,7 +25,11 @@ const getSetOfFields = async(function() {
 
 		fields = objectAssign(fields, details);
 
-		payType.add(details['Первоначальный взнос']);
+		details.percentage.forEach(item => {
+			payType.add(item['currency']);
+		});
+
+		//payType.add(details['Первоначальный взнос']);
 	    givingType.add(details['Варианты выдачи']);
 	    fine.add(details['Штраф за досрочное погашение кредита']);
 	    max.add(maxSumm[details['Максимально возможная сумма по кредиту']]);
@@ -37,9 +41,9 @@ const maxs = [];
 
 getSetOfFields()
 	.then(() => {
-		console.log(fields.percentage);
-		//console.log('------------payType-------------');
-		//console.log(payType);
+		//console.log(fields);
+		console.log('------------payType-------------');
+		console.log(payType);
 		//console.log('------------givingType-------------');
 		//console.log(givingType);
 		//console.log('------------fine-------------');
