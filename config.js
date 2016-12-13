@@ -10,5 +10,11 @@ module.exports = {
     ],
     CREDIT_DOMAIN: '/kredity',
     DEBIT_DOMAIN: '/vklady',
-    CREDIT_PAGING: 'Kredity_page'
+    CREDIT_PAGING: 'Kredity_page',
+    DEBITS_PATHES: [
+        '/type/1',
+        '/v-inostrannoj-valute',
+        '/dlia-biznesa'
+    ],
+    DEBIT_PAGING: 'Vklady_page'
 };

@@ -1,6 +1,6 @@
 const 
-	{ getAllCredits } = require('./creditsPageParser'),
-	{ addDetailsToCredit } = require('./singleCreditPageParser'),
+	{ getAllDebits } = require('./debitsPageParser'),
+	{ addDetailsToDebit } = require('./singleDebitPageParser'),
 	{ values } = require('lodash'),
     async = require('asyncawait/async'),
     await = require('asyncawait/await'),
@@ -17,15 +17,15 @@ let
 	fields = {};
 
 const getSetOfFields = async(function() {
-	const credits = await(getAllCredits()),
+	const credits = await(getAllDebits()),
 		crs = values(credits);
 
 	for(let i = 0; i < crs.length; i++) {
-		const details = await(addDetailsToCredit(crs[i]));
+		const details = await(addDetailsToDebit(crs[i]));
 
 		fields = objectAssign(fields, details);
 
-		payType.add(details['page']);
+		payType.add(details['Первоначальный взнос']);
 	    givingType.add(details['Варианты выдачи']);
 	    fine.add(details['Штраф за досрочное погашение кредита']);
 	    max.add(maxSumm[details['Максимально возможная сумма по кредиту']]);
@@ -37,9 +37,9 @@ const maxs = [];
 
 getSetOfFields()
 	.then(() => {
-		//console.log(fields);
-		console.log('------------payType-------------');
-		console.log(payType);
+		console.log(fields.percentage);
+		//console.log('------------payType-------------');
+		//console.log(payType);
 		//console.log('------------givingType-------------');
 		//console.log(givingType);
 		//console.log('------------fine-------------');
