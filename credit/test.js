@@ -11,19 +11,24 @@ const
     time = new Set(),
     { maxSumm } = require('../maps/creditMaxSumm'),
     objectAssign = require('object-assign'),
-    numeral = require('numeral');
+    numeral = require('numeral'),
+    fs = require('fs');
 
 let 
-	fields = {};
+	fields = {},
+	result = [];
 
 const getSetOfFields = async(function() {
 	const credits = await(getAllCredits()),
-		crs = values(credits);
+		crs = values(credits),
+		file = fs.createWriteStream('credits.json');;
 
 	for(let i = 0; i < crs.length; i++) {
 		const details = await(addDetailsToCredit(crs[i]));
 
 		fields = objectAssign(fields, details);
+
+		result.push(details);
 
 		details.terms.forEach(item => {
 			//payType.add(item['minTermInMonth']);
@@ -33,6 +38,9 @@ const getSetOfFields = async(function() {
 	    max.add(maxSumm[details['Максимально возможная сумма по кредиту']]);
 	    time.add(details['Срок рассмотрения заявки']);
 	}
+
+	file.write(JSON.stringify(result));
+	file.end();
 });
 
 const maxs = [];

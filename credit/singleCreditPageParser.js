@@ -7,7 +7,8 @@ const
     { currencies } = require('../maps/creditCurrency'),
     { purpose } = require('../maps/creditPurpose'),
     objectAssign = require('object-assign'),
-    numeral = require('numeral');
+    numeral = require('numeral'),
+    { Base64 } = require('js-base64');
 
 function parsePage(page) {
     if(isEmpty(page)){
@@ -54,7 +55,7 @@ const addDetailsToCredit = async(function(credit) {
                         case 1: 
                             const sgs = $(column).find('strong');
                             minAmmount = numeral($(sgs[0]).text().trim()).value();
-                            maxAmmount = numeral($(sgs[1]).text().trim()).value();
+                            maxAmmount = numeral($(sgs[1]).text().trim()).value() || minAmmount;
                             break;
                         default:
                             const term = arr[idx - 2].split('до');
@@ -78,7 +79,7 @@ const addDetailsToCredit = async(function(credit) {
             rows.each((idx, row) => {
                 const columns = $(row).children('td');
                 temp[$(columns[0]).text()] = ($(columns[1]).text()).trim().replace(/(\r\n|\n|\r|\t)/g, '');
-                result[$(columns[0]).text()] = ($(columns[1]).text()).trim().replace(/(\r\n|\n|\r|\t)/g, '');
+                //result[$(columns[0]).text()] = ($(columns[1]).text()).trim().replace(/(\r\n|\n|\r|\t)/g, '');
             });
 
             result.needsGurantor = temp['Без поручителей'] == 'Нет';
@@ -90,7 +91,7 @@ const addDetailsToCredit = async(function(credit) {
             result.updateDate = temp['Дата обновления:'];
             result.paymentPosibilityName = 'CARD';
             result.repaymentMethodName = 'MOUNTLY_SIMILAR_PART'; 
-            
+            result.description = Base64.encode(temp['Краткая информация']);
          }));
 
     return result;
