@@ -6,6 +6,7 @@ const
     { isEmpty } = require('lodash'),
     { currencies } = require('../maps/creditCurrency'),
     { purpose } = require('../maps/creditPurpose'),
+    { types } = require('../maps/creditPaymentType'),
     objectAssign = require('object-assign'),
     numeral = require('numeral'),
     { Base64 } = require('js-base64');
@@ -65,7 +66,7 @@ const addDetailsToCredit = async(function(credit) {
                                 maxAmmount,
                                 minTermInMonth: numeral(term[0]).value(),
                                 maxTermInMonth: numeral(term[1] || term[0]).value(),
-                                percentage: $(column).text().trim().split('%')[0].split(': ')[1] || null
+                                percentage: $(column).text().trim().split('%')[0].split(': ')[1] ? $(column).text().trim().split('%')[0].split(': ')[1].split(',').join('.') : null
                             });
                             break;
                     } 
@@ -83,13 +84,13 @@ const addDetailsToCredit = async(function(credit) {
             });
 
             result.needsGurantor = temp['Без поручителей'] == 'Нет';
-            result.gracePeriod = numeral(temp['Срок рассмотрения заявки']).value();
+            //result.gracePeriod = numeral(temp['Срок рассмотрения заявки']).value();
             result.pledge = temp['Без залога'] == 'Нет';
             result.needCertificates = temp['Без справок'] == 'Нет';
             result.goalName = purpose[temp['Цель кредита']];
             result.clientTypeName = temp['Цель кредита'] == 'Для бизнеса' ? 'LEGAL' : 'PHYSICAL';
-            result.updateDate = temp['Дата обновления:'];
-            result.paymentPosibilityName = 'CARD';
+            result.updateDate = temp['Дата обновления:'] ? temp['Дата обновления:'].split('.').reverse().join('-') : [];
+            result.paymentPosibilityName = types[temp['Варианты выдачи']];
             result.repaymentMethodName = 'MOUNTLY_SIMILAR_PART'; 
             result.description = Base64.encode(temp['Краткая информация']);
          }));

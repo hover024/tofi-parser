@@ -4,6 +4,7 @@ const
     await = require('asyncawait/await'),
     { keyBy } = require('lodash'),
     hash = require('password-hash'),
+    md5 = require('md5'),
     { DOMAIN, CREDITS_PATHES, CREDIT_DOMAIN, CREDIT_PAGING } = require('../config'),
     { Base64 } = require('js-base64');
 
@@ -61,7 +62,7 @@ function getRowData($, row) {
         link,
         name,
         bankName,
-        id: name + bankName
+        id: link.split('/').pop()
     }
 }
 

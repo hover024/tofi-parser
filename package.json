@@ -13,6 +13,7 @@
     "cheerio": "^0.22.0",
     "js-base64": "^2.1.9",
     "lodash": "^4.17.2",
+    "md5": "^2.2.1",
     "numeral": "^2.0.1",
     "object-assign": "^4.1.0",
     "password-hash": "^1.2.2",
