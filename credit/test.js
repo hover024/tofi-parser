@@ -25,9 +25,11 @@ const getSetOfFields = async(function() {
 
 		fields = objectAssign(fields, details);
 
-		payType.add(details['page']);
-	    givingType.add(details['Варианты выдачи']);
-	    fine.add(details['Штраф за досрочное погашение кредита']);
+		details.terms.forEach(item => {
+			//payType.add(item['minTermInMonth']);
+			//givingType.add(item['maxTermInMonth']);
+		});
+	    fine.add(details['Без залога']);
 	    max.add(maxSumm[details['Максимально возможная сумма по кредиту']]);
 	    time.add(details['Срок рассмотрения заявки']);
 	}
@@ -37,13 +39,13 @@ const maxs = [];
 
 getSetOfFields()
 	.then(() => {
-		//console.log(fields);
-		console.log('------------payType-------------');
-		console.log(payType);
+		console.log(fields);
+		//console.log('------------payType-------------');
+		//console.log(payType);
 		//console.log('------------givingType-------------');
 		//console.log(givingType);
 		//console.log('------------fine-------------');
-		//console.log(fine);
+		console.log(fine);
 		//console.log('------------max-------------');
 		//console.log(max);
 		//console.log('------------time-------------');

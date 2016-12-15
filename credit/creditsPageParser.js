@@ -4,7 +4,8 @@ const
     await = require('asyncawait/await'),
     { keyBy } = require('lodash'),
     hash = require('password-hash'),
-    { DOMAIN, CREDITS_PATHES, CREDIT_DOMAIN, CREDIT_PAGING } = require('../config');
+    { DOMAIN, CREDITS_PATHES, CREDIT_DOMAIN, CREDIT_PAGING } = require('../config'),
+    { Base64 } = require('js-base64');
 
 const getCreditsForPath = async(function (path) {
     let result = [];
@@ -50,8 +51,8 @@ function getRowData($, row) {
     const
         linkTag = $(row).find('span.checkbox-text a'),
         link = $(linkTag).attr('href'),
-        name = $(linkTag).text().trim(),
-        bank = $(row).find('span.n-bank').text().trim(),
+        name = Base64.encode($(linkTag).text().trim()),
+        bankName = Base64.encode($(row).find('span.n-bank').text().trim()),
         rate = $(row).children('td.number').text().trim(),
         payment = $(row).children('td.pay').text().trim(),
         overpay = $(row).children('td.overpay').text().trim();
@@ -59,10 +60,8 @@ function getRowData($, row) {
     return {
         link,
         name,
-        rate,
-        payment,
-        overpay,
-        bank
+        bankName,
+        id: name + bankName
     }
 }
 
