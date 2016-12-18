@@ -21,7 +21,7 @@ let
 const getSetOfFields = async(function() {
 	const credits = await(getAllCredits()),
 		crs = values(credits),
-		file = fs.createWriteStream('credits.json');;
+		file = fs.createWriteStream('credits.json');
 
 	for(let i = 0; i < crs.length; i++) {
 		const details = await(addDetailsToCredit(crs[i]));

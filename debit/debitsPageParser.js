@@ -4,7 +4,8 @@ const
     await = require('asyncawait/await'),
     { keyBy } = require('lodash'),
     hash = require('password-hash'),
-    { DOMAIN, DEBITS_PATHES, DEBIT_DOMAIN, DEBIT_PAGING } = require('../config');
+    { DOMAIN, DEBITS_PATHES, DEBIT_DOMAIN, DEBIT_PAGING } = require('../config'),
+    { Base64 } = require('js-base64');
 
 const getDebitsForPath = async(function (path) {
     let result = [];
@@ -16,7 +17,7 @@ const getDebitsForPath = async(function (path) {
             rows.each((idx, row) => {
                 result = [
                     ...result,
-                    getRowData($, row)
+                    getRowData($, row, path)
                 ]
             });
 
@@ -25,7 +26,7 @@ const getDebitsForPath = async(function (path) {
             rows.each((idx, row) => {
                 result = [
                     ...result,
-                    getRowData($, row)
+                    getRowData($, row, path)
                 ]
             });
         })));
@@ -46,12 +47,12 @@ const getAllDebits = async( function() {
     return keyBy(result, ({bank, name}) => bank+name);
 });
 
-function getRowData($, row) {
+function getRowData($, row, path) {
     const
         linkTag = $(row).find('span.checkbox-text a'),
         link = $(linkTag).attr('href'),
-        name = $(linkTag).text().trim(),
-        bank = $(row).find('span.n-bank').text().trim(),
+        name = Base64.encode($(linkTag).text().trim()),
+        bankName = Base64.encode($(row).find('span.n-bank').text().trim()),
         numbers=$(row).children('td.number');
         rate = $(numbers[0]).text().trim(),
         time = $(numbers[1]).text().trim(),
@@ -60,10 +61,9 @@ function getRowData($, row) {
     return {
         link,
         name,
-        rate,
-        time,
-        income,
-        bank
+        bankName,
+        clientType: path != '/dlia-biznesa' ? {name: 'LEGAL', ru_descr: Base64.encode('Для юридических лиц')} : {name: 'PHYSICAL', ru_descr: Base64.encode('Для физических лиц')},
+        id: link.split('/').pop()
     }
 }
 

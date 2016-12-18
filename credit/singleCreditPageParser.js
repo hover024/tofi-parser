@@ -50,7 +50,10 @@ const addDetailsToCredit = async(function(credit) {
                     switch(idx) {
                         case 0:
                             if(!isEmpty($(column).text().trim())){
-                                currencyName = currencies[$(column).text().trim()]
+                                currency = {
+                                    name: currencies[$(column).text().trim()],
+                                    ru_descr: Base64.encode($(column).text().trim())
+                                };
                             }
                             break;
                         case 1: 
@@ -61,7 +64,7 @@ const addDetailsToCredit = async(function(credit) {
                         default:
                             const term = arr[idx - 2].split('до');
                             resultArr.push({
-                                currencyName,
+                                currency,
                                 minAmmount,
                                 maxAmmount,
                                 minTermInMonth: numeral(term[0]).value(),
@@ -87,11 +90,17 @@ const addDetailsToCredit = async(function(credit) {
             //result.gracePeriod = numeral(temp['Срок рассмотрения заявки']).value();
             result.pledge = temp['Без залога'] == 'Нет';
             result.needCertificates = temp['Без справок'] == 'Нет';
-            result.goalName = purpose[temp['Цель кредита']];
-            result.clientTypeName = temp['Цель кредита'] == 'Для бизнеса' ? 'LEGAL' : 'PHYSICAL';
+            result.goal = {
+                name: purpose[temp['Цель кредита']],
+                ru_descr: Base64.encode(temp['Цель кредита'])
+            }
+            result.clientType = temp['Цель кредита'] == 'Для бизнеса' ? {name: 'LEGAL', ru_descr: Base64.encode('Для юридических лиц')} : {name: 'PHYSICAL', ru_descr: Base64.encode('Для физических лиц')};
             result.updateDate = temp['Дата обновления:'] ? temp['Дата обновления:'].split('.').reverse().join('-') : [];
-            result.paymentPosibilityName = types[temp['Варианты выдачи']];
-            result.repaymentMethodName = 'MOUNTLY_SIMILAR_PART'; 
+            result.paymentPosibility = {
+                name: types[temp['Варианты выдачи']],
+                ru_descr: Base64.encode(temp['Варианты выдачи'])
+            }
+            result.repaymentMethod = { name: 'MOUNTLY_SIMILAR_PART', ru_descr: Base64.encode('Ежемесячно равными частями')}; 
             result.description = Base64.encode(temp['Краткая информация']);
          }));
 
