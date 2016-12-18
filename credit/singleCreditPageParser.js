@@ -96,10 +96,7 @@ const addDetailsToCredit = async(function(credit) {
             }
             result.clientType = temp['Цель кредита'] == 'Для бизнеса' ? {name: 'LEGAL', ru_descr: Base64.encode('Для юридических лиц')} : {name: 'PHYSICAL', ru_descr: Base64.encode('Для физических лиц')};
             result.updateDate = temp['Дата обновления:'] ? temp['Дата обновления:'].split('.').reverse().join('-') : [];
-            result.paymentPosibility = {
-                name: types[temp['Варианты выдачи']],
-                ru_descr: Base64.encode(temp['Варианты выдачи'])
-            }
+            result.paymentPosibility = types[temp['Варианты выдачи']];
             result.repaymentMethod = { name: 'MOUNTLY_SIMILAR_PART', ru_descr: Base64.encode('Ежемесячно равными частями')}; 
             result.description = Base64.encode(temp['Краткая информация']);
          }));
