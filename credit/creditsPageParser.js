@@ -62,7 +62,7 @@ function getRowData($, row) {
         link,
         name,
         bankName,
-        id: link.split('/').pop()
+        agregatorName: link.split('/').pop()
     }
 }
 

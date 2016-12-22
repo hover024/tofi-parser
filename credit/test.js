@@ -28,7 +28,7 @@ const getSetOfFields = async(function() {
 
 		fields = objectAssign(fields, details);
 
-		if(details.updateDate)
+		if(details.paymentPosibilities)
 			result.push(details);
 
 		details.terms.forEach(item => {

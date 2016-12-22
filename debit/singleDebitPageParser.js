@@ -78,7 +78,7 @@ const addDetailsToDebit = async(function(debit) {
                                 maxAmmount,
                                 minTermInMonth: term[0],
                                 maxTermInMonth: term[1] || term[0],
-                                percentage: $(column).text().trim().split('%')[0] ? $(column).text().trim().split('%')[0].split(',').join('.') : null
+                                percentage: $(column).text().trim().split('%')[0] ? parseFloat($(column).text().trim().split('%')[0].split(',').join('.')) : null
                             });
                             break;
                     } 

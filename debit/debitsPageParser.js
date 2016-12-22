@@ -63,7 +63,7 @@ function getRowData($, row, path) {
         name,
         bankName,
         clientType: path != '/dlia-biznesa' ? {name: 'LEGAL', ru_descr: Base64.encode('Для юридических лиц')} : {name: 'PHYSICAL', ru_descr: Base64.encode('Для физических лиц')},
-        id: link.split('/').pop()
+        agregatorName: link.split('/').pop()
     }
 }
 

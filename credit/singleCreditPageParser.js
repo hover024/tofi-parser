@@ -71,6 +71,9 @@ const addDetailsToCredit = async(function(credit) {
                                 maxTermInMonth: numeral(term[1] || term[0]).value(),
                                 percentage: $(column).text().trim().split('%')[0].split(': ')[1] ? $(column).text().trim().split('%')[0].split(': ')[1].split(',').join('.') : null
                             });
+                            if(resultArr[resultArr.length -1].percentage && resultArr[resultArr.length -1].percentage[0] == 'п'){
+                                resultArr[resultArr.length -1].percentage = null;
+                            }
                             break;
                     } 
                 });
@@ -96,7 +99,7 @@ const addDetailsToCredit = async(function(credit) {
             }
             result.clientType = temp['Цель кредита'] == 'Для бизнеса' ? {name: 'LEGAL', ru_descr: Base64.encode('Для юридических лиц')} : {name: 'PHYSICAL', ru_descr: Base64.encode('Для физических лиц')};
             result.updateDate = temp['Дата обновления:'] ? temp['Дата обновления:'].split('.').reverse().join('-') : [];
-            result.paymentPosibility = types[temp['Варианты выдачи']];
+            result.paymentPosibilities = types[temp['Варианты выдачи']];
             result.repaymentMethod = { name: 'MOUNTLY_SIMILAR_PART', ru_descr: Base64.encode('Ежемесячно равными частями')}; 
             result.description = Base64.encode(temp['Краткая информация']);
          }));
