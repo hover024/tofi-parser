@@ -18,6 +18,7 @@ function parsePage(page) {
     if(page[0] == '/'){
         return decodeURIComponent(decodeURIComponent(page.split('/iframe/')[1]));
     }
+    return page;
 }
 
 const addDetailsToCredit = async(function(credit) {
@@ -52,7 +53,7 @@ const addDetailsToCredit = async(function(credit) {
                             if(!isEmpty($(column).text().trim())){
                                 currency = {
                                     name: currencies[$(column).text().trim()],
-                                    ru_descr: Base64.encode($(column).text().trim())
+                                    ru_descr: $(column).text().trim()
                                 };
                             }
                             break;
@@ -67,8 +68,8 @@ const addDetailsToCredit = async(function(credit) {
                                 currency,
                                 minAmmount,
                                 maxAmmount,
-                                minTermInMonth: numeral(term[0]).value(),
-                                maxTermInMonth: numeral(term[1] || term[0]).value(),
+                                minTermMonth: numeral(term[0]).value(),
+                                maxTermMonth: numeral(term[1] || term[0]).value(),
                                 percentage: $(column).text().trim().split('%')[0].split(': ')[1] ? $(column).text().trim().split('%')[0].split(': ')[1].split(',').join('.') : null
                             });
                             if(resultArr[resultArr.length -1].percentage && resultArr[resultArr.length -1].percentage[0] == 'п'){
@@ -81,7 +82,7 @@ const addDetailsToCredit = async(function(credit) {
 
             result.terms = resultArr;
 
-            result.url = parsePage(page);
+            result.url = parsePage(page).includes('.html') ? parsePage(page).split('.html')[0] + '.html' : parsePage(page);
 
             rows.each((idx, row) => {
                 const columns = $(row).children('td');
@@ -94,14 +95,19 @@ const addDetailsToCredit = async(function(credit) {
             result.pledge = temp['Без залога'] == 'Нет';
             result.needCertificates = temp['Без справок'] == 'Нет';
             result.goal = {
-                name: purpose[temp['Цель кредита']],
-                ru_descr: Base64.encode(temp['Цель кредита'])
+                name: temp['Цель кредита'],
+                ru_descr: purpose[temp['Цель кредита']]
             }
-            result.clientType = temp['Цель кредита'] == 'Для бизнеса' ? {name: 'LEGAL', ru_descr: Base64.encode('Для юридических лиц')} : {name: 'PHYSICAL', ru_descr: Base64.encode('Для физических лиц')};
+            result.clientType = temp['Цель кредита'] == 'Для бизнеса' ? {name: 'Юр.лицо', ru_descr: 'Для юридических лиц'} : {name: 'Физ.лицо', ru_descr: 'Для физических лиц'};
             result.updateDate = temp['Дата обновления:'] ? temp['Дата обновления:'].split('.').reverse().join('-') : [];
-            result.paymentPosibilities = types[temp['Варианты выдачи']];
-            result.repaymentMethod = { name: 'MOUNTLY_SIMILAR_PART', ru_descr: Base64.encode('Ежемесячно равными частями')}; 
-            result.description = Base64.encode(temp['Краткая информация']);
+            result.paymentPosibilities = types[temp['Варианты выдачи']] ? types[temp['Варианты выдачи']].map(x => {
+                return {
+                    ru_descr: x.ru_descr,
+                    name: x.name
+                }
+            }) : [];
+            result.repaymentMethod = { name: 'Равномерно', ru_descr: 'Ежемесячно равными частями'}; 
+            result.description = temp['Краткая информация'];
          }));
 
     return result;

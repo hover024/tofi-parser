@@ -1,7 +1,7 @@
 const 
 	{ getAllCredits } = require('./creditsPageParser'),
 	{ addDetailsToCredit } = require('./singleCreditPageParser'),
-	{ values } = require('lodash'),
+	{ values, isEmpty } = require('lodash'),
     async = require('asyncawait/async'),
     await = require('asyncawait/await'),
     payType = new Set(),
@@ -28,7 +28,7 @@ const getSetOfFields = async(function() {
 
 		fields = objectAssign(fields, details);
 
-		if(details.paymentPosibilities)
+		if(!isEmpty(details.terms))
 			result.push(details);
 
 		details.terms.forEach(item => {

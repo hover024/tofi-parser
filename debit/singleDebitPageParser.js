@@ -38,13 +38,13 @@ const addDetailsToDebit = async(function(debit) {
                 page = $($(rows).find('a')[0]).attr('href'),
                 arr=[],
                 pRows = $('div.credit-rates table tbody tr'),
-                resultArr = [],
                 headRow = $('div.credit-rates table thead th');
             let 
                 currencyName = '',
                 minAmmount = '',
                 maxAmmount = '',
-                temp = {};
+                temp = {},
+                resultArr = [];
 
             headRow.each((idx, tr) => {
                 if (idx > 1) {
@@ -54,6 +54,7 @@ const addDetailsToDebit = async(function(debit) {
 
             pRows.each((idx, row) => {
                 const columns = $(row).children('td');
+                let tempArr=[];
                 columns.each((idx, column) => {
 
                     switch(idx) {
@@ -61,28 +62,47 @@ const addDetailsToDebit = async(function(debit) {
                             if(!isEmpty($(column).text().trim())){
                                 currency = {
                                     name: currencies[$(column).text().trim()],
-                                    ru_descr: Base64.encode($(column).text().trim())
+                                    ru_descr: $(column).text().trim()
                                 };
                             }
                             break;
                         case 1: 
                             const sgs = $(column).find('strong');
-                            minAmmount = numeral($(sgs[0]).text().trim()).value();
+                            minAmmount = numeral($(sgs[0]).text().trim().split('.')[0]).value();
                             maxAmmount = numeral($(sgs[1]).text().trim()).value() || minAmmount;
                             break;
                         default:
                             const term = termToArray(arr[idx - 2]);
-                            resultArr.push({
+                            tempArr.push({
                                 currency,
                                 minAmmount,
                                 maxAmmount,
-                                minTermInMonth: term[0],
-                                maxTermInMonth: term[1] || term[0],
+                                minTermMonth: term[0],
+                                maxTermMonth: term[1] || term[0],
                                 percentage: $(column).text().trim().split('%')[0] ? parseFloat($(column).text().trim().split('%')[0].split(',').join('.')) : null
                             });
                             break;
-                    } 
+                    }
+
+                    
                 });
+
+                tempArr = tempArr.filter(x => x.percentage !== null);
+                    if(debit.link == '/bank/alfabank/vklady/1365-aljfa-prayim') {
+                                //console.log(i);
+                                console.log(tempArr);
+                    }
+                    for(let i = 0; i < tempArr.length; i++) {
+                        //console.log(debit.link);
+                        if(debit.link == '/bank/alfabank/vklady/1365-aljfa-prayim') {
+                                //console.log(i);
+                                //console.log(tempArr[i]);
+                        }
+                        if(tempArr[i].minTermMonth == tempArr[i].maxTermMonth || !tempArr[i].maxTermMonth) {
+                            tempArr[i].maxTermMonth = (i == (tempArr.length - 1)) ? null : tempArr[i+1].minTermMonth
+                        }
+                    }
+                resultArr = [].concat(resultArr, tempArr); 
             });
 
             result.terms = resultArr;
@@ -97,13 +117,13 @@ const addDetailsToDebit = async(function(debit) {
 
             result.updateDate = temp['Дата обновления'] ? temp['Дата обновления'].split('.').reverse().join('-') : null;
             result.percentageType = {
-                name: types[temp['Периодичность выплаты процентов']],
-                ru_descr: Base64.encode(temp['Периодичность выплаты процентов'])
+                name: temp['Периодичность выплаты процентов'],
+                ru_descr: types[temp['Периодичность выплаты процентов']]
             };
             result.refilling = temp['Пополнение'] == 'Да';
             result.capitalization = temp['Капитализация'] == 'Да';
             result.beforeTermWithdrawal = temp['Частичное снятие'] == 'Да';
-            result.description = Base64.encode(temp['Описание'] ? temp['Описание'].split('Свернуть')[0].trim() : '');
+            result.description = temp['Описание'] ? temp['Описание'].split('Свернуть')[0].trim() : '';
         }));
 
     return result;

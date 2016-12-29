@@ -52,8 +52,8 @@ function getRowData($, row) {
     const
         linkTag = $(row).find('span.checkbox-text a'),
         link = $(linkTag).attr('href'),
-        name = Base64.encode($(linkTag).text().trim()),
-        bankName = Base64.encode($(row).find('span.n-bank').text().trim()),
+        name = $(linkTag).text().trim(),
+        bankName = $(row).find('span.n-bank').text().trim(),
         rate = $(row).children('td.number').text().trim(),
         payment = $(row).children('td.pay').text().trim(),
         overpay = $(row).children('td.overpay').text().trim();

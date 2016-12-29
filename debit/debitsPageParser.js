@@ -51,8 +51,8 @@ function getRowData($, row, path) {
     const
         linkTag = $(row).find('span.checkbox-text a'),
         link = $(linkTag).attr('href'),
-        name = Base64.encode($(linkTag).text().trim()),
-        bankName = Base64.encode($(row).find('span.n-bank').text().trim()),
+        name = $(linkTag).text().trim(),
+        bankName = $(row).find('span.n-bank').text().trim(),
         numbers=$(row).children('td.number');
         rate = $(numbers[0]).text().trim(),
         time = $(numbers[1]).text().trim(),
@@ -62,7 +62,7 @@ function getRowData($, row, path) {
         link,
         name,
         bankName,
-        clientType: path != '/dlia-biznesa' ? {name: 'LEGAL', ru_descr: Base64.encode('Для юридических лиц')} : {name: 'PHYSICAL', ru_descr: Base64.encode('Для физических лиц')},
+        clientType: path == '/dlia-biznesa' ? {name: 'Юр.лицо', ru_descr: 'Для юридических лиц'} : {name: 'Физ.лицо', ru_descr: 'Для физических лиц'},
         agregatorName: link.split('/').pop()
     }
 }
